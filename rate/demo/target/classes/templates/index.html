@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!--文档类型-->
+<html lang="zh-CN">
+<!--html标签，lang最开始为en，改为中文-->
+
+<head>
+    <meta charset="UTF-8">
+    <!--文件字符编码-->
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!--禁用缩放，兼容手机，宽度跟设备宽度一样，默认的缩放比例是1倍，最小缩放比例等于1，最大缩放比例等于1，用户不准缩放-- >
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!--告诉IE使用最新内核-->
+    <title>Rate</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!--标题-->
+</head>
+
+<body>
+    <center>
+        <h1 style="color: rgb(32, 234, 166);">匯率及幣值換算</h1>
+        <p> 試算內容僅供參考，實際交易之金額以交易當時匯率為計算基準 </p>
+        <div>我想要將
+            <select></select>
+            參考匯率
+        </div>
+        <div>兌換成
+            <select></select>
+            參考匯率
+        </div>
+
+        <div id="div1"></div>
+        <button id="but01">獲取匯率</button>
+
+    </center>
+    <script>
+
+        $("#but01").click(function () {
+            $.ajax(
+                {
+                    url: 'getRate',
+                    method: "get",
+                    success: res => {
+                        console.log("寫入成功" + res)
+                    },
+                    error: res => {
+                        console.log("寫入失敗" + res)
+                    }
+
+                }
+            )
+        })
+    </script>
+</body>
+
+</html>
