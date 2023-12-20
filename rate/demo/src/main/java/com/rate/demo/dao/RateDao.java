@@ -1,5 +1,7 @@
 package com.rate.demo.dao;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.rate.demo.model.Rate;
 
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 @Repository
@@ -20,7 +23,7 @@ public class RateDao {
 
         String sql = "INSERT INTO rate (Date, USD_NTD, RMB_USD,EUR_USD,USD_JPY,GBP_USD,AUD_USD,USD_HKD,USD_RMB,USD_ZAR,NZD_USD) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
         try {
-            for (int i = 11; i <= rateString.size(); i += 11) {
+            for (int i = 11; i < rateString.size(); i += 11) {
                 rate.setDate(rateString.get(i));
                 rate.setUSD_NTD(rateString.get(i + 1));
                 rate.setRMB_USD(rateString.get(i + 2));
@@ -51,4 +54,40 @@ public class RateDao {
         String sql = "TRUNCATE TABLE RATE";
         jdbcTemplate.execute(sql);
     }
+
+    public boolean bathInsert(List<Rate> insertdata) {
+        try {
+            String sql = "INSERT INTO rate (Date, USD_NTD, RMB_USD,EUR_USD,USD_JPY,GBP_USD,AUD_USD,USD_HKD,USD_RMB,USD_ZAR,NZD_USD) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+            jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+                @Override
+                public int getBatchSize() {
+                    return insertdata.size();
+                }
+
+                @Override
+                public void setValues(PreparedStatement ps, int i) throws SQLException {
+                    Rate rate = insertdata.get(i);
+                    ps.setString(1, rate.getDate());
+                    ps.setString(2, rate.getUSD_NTD());
+                    ps.setString(3, rate.getRMB_USD());
+                    ps.setString(4, rate.getEUR_USD());
+                    ps.setString(5, rate.getUSD_JPY());
+                    ps.setString(6, rate.getGBP_USD());
+                    ps.setString(7, rate.getAUD_USD());
+                    ps.setString(8, rate.getUSD_HKD());
+                    ps.setString(9, rate.getUSD_RMB());
+                    ps.setString(10, rate.getUSD_ZAR());
+                    ps.setString(11, rate.getNZD_USD());
+                }
+
+            });
+            return true;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
 }

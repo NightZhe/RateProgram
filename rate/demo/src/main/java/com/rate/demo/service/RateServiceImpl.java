@@ -43,12 +43,14 @@ import com.opencsv.exceptions.CsvException;
 public class RateServiceImpl implements RateService {
     @Autowired
     private RateDao rateDao;
+    @Autowired
+    private Rate rate;
 
     @Override
     public Boolean rateList() throws IOException, CsvException {
         rateDao.deleteDate();
         getcsv();
-        CSVReader readerCsvout = new CSVReader(new FileReader("/Users/ben/Documents/rate/outputline.csv"));
+        CSVReader readerCsvout = new CSVReader(new FileReader("/Users/ben/Documents/RateProgram/rate/outputline.csv"));
         List<String[]> linesout = readerCsvout.readAll();
         List<String> rateString = new ArrayList<>();
         // Assuming the first row is header, start from index 1
@@ -62,13 +64,44 @@ public class RateServiceImpl implements RateService {
 
         System.out.println("------------");
         System.out.println(rateString.size());
-        if (rateDao.insertRate(rateString)) {
-            System.out.println("true");
+        // if (rateDao.insertRate(rateString)) {
+        // System.out.println("true");
+        // return true;
+        // } else {
+        // System.out.println("false");
+        // return false;
+        // }
+
+        List<Rate> insertdata = converToRAaetData(rateString);
+
+        if (rateDao.bathInsert(insertdata)) {
+            System.out.println("success");
             return true;
         } else {
-            System.out.println("fales");
+            System.err.println("error");
             return false;
         }
+    }
+
+    public List<Rate> converToRAaetData(List<String> rateString) {
+        List<Rate> ratedata = new ArrayList<>();
+        for (int i = 11; i < rateString.size(); i += 11) {
+            Rate rate = new Rate();
+            rate.setDate(rateString.get(i));
+            rate.setUSD_NTD(rateString.get(i + 1));
+            rate.setRMB_USD(rateString.get(i + 2));
+            rate.setEUR_USD(rateString.get(i + 3));
+            rate.setUSD_JPY(rateString.get(i + 4));
+            rate.setGBP_USD(rateString.get(i + 5));
+            rate.setAUD_USD(rateString.get(i + 6));
+            rate.setUSD_HKD(rateString.get(i + 7));
+            rate.setUSD_RMB(rateString.get(i + 8));
+            rate.setUSD_ZAR(rateString.get(i + 9));
+            rate.setNZD_USD(rateString.get(i + 10));
+            ratedata.add(rate);
+        }
+
+        return ratedata;
     }
 
     public void getcsv() {
@@ -101,9 +134,10 @@ public class RateServiceImpl implements RateService {
                 CsvSchema csvSchema = csvSchemaBuilder.build().withHeader();
                 CsvMapper csvMapper = new CsvMapper();
                 csvMapper.writerFor(JsonNode.class).with(csvSchema)
-                        .writeValue(new File("/Users/ben/Documents/rate/ordreline.csv"), jsontree);
+                        .writeValue(new File("/Users/ben/Documents/RateProgram/rate/orderline.csv"), jsontree);
 
-                CSVReader readerCsv = new CSVReader(new FileReader("/Users/ben/Documents/rate/ordreline.csv"));
+                CSVReader readerCsv = new CSVReader(
+                        new FileReader("/Users/ben/Documents/RateProgram/rate/orderline.csv"));
                 List<String[]> lines = readerCsv.readAll();
                 readerCsv.close();
 
@@ -111,7 +145,8 @@ public class RateServiceImpl implements RateService {
                         "USD_HKD", "USD_RMB", "USD_ZAR", "NZD_USD" };
                 lines.set(0, newHeadre);
 
-                CSVWriter csvWriter = new CSVWriter(new FileWriter("/Users/ben/Documents/rate/outputline.csv"));
+                CSVWriter csvWriter = new CSVWriter(
+                        new FileWriter("/Users/ben/Documents/RateProgram/rate/outputline.csv"));
                 csvWriter.writeAll(lines);
                 csvWriter.close();
             }
@@ -120,58 +155,6 @@ public class RateServiceImpl implements RateService {
         }
 
     }
-
-    // public static void main(String[] agrs) {
-    // try {
-    // disableSSLVerification();
-    // URL url = new URL(
-    // "https://openapi.taifex.com.tw/v1/DailyForeignExchangeRates");
-    // HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-    // connection.setRequestMethod("GET");
-
-    // int responseCode = connection.getResponseCode();
-    // if (responseCode == HttpURLConnection.HTTP_OK) {
-    // BufferedReader reader = new BufferedReader(new
-    // InputStreamReader(connection.getInputStream()));
-    // StringBuilder response = new StringBuilder();
-    // String line;
-
-    // while ((line = reader.readLine()) != null) {
-    // response.append(line);
-    // }
-
-    // System.out.println("Response:" + response.toString());
-
-    // ObjectMapper objectMapper = new ObjectMapper();
-    // JsonNode jsonNode = objectMapper.readTree(response.toString());
-
-    // String date = jsonNode.get(0).get("Date").asText();
-    // String usdTOnt = jsonNode.get(0).get("USD/NTD").toString();
-
-    // Date today = new Date();
-    // Calendar calendar = Calendar.getInstance();
-    // calendar.setTime(today);
-    // calendar.add(calendar.DAY_OF_MONTH, -1);// 取得今日-1(yesterday);
-    // Date yesterday = calendar.getTime();
-    // String newNowDate = String.format("%1$tY%1$tm%1$td", yesterday);
-
-    // for (int i = 0; i < jsonNode.size(); i++) {
-    // String getDate = (jsonNode.get(i).get("Date").asText()).substring(0, 8);
-    // if (getDate.equals(newNowDate)) {
-    // System.out.println("getDate:" + jsonNode.get(i).get("Date").asText());
-    // String getusdToNtd = jsonNode.get(i).get("USD/NTD").asText();
-    // System.out.println("getusdToNtd:" + getusdToNtd);
-    // } else {
-    // System.out.println("notMatch");
-    // }
-    // }
-
-    // }
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-
-    // }
 
     private static void disableSSLVerification() throws NoSuchAlgorithmException, KeyManagementException {
         TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
