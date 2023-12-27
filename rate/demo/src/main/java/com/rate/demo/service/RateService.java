@@ -10,4 +10,6 @@ import com.rate.demo.model.Rate;
 public interface RateService {
 
     public Boolean rateList() throws FileNotFoundException, IOException, CsvException;
+
+    public Boolean getTask();
 }

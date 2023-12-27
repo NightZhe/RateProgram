@@ -29,13 +29,15 @@ public class MainController {
     @ResponseBody
     public Map<String, Object> getRate() throws FileNotFoundException, IOException, CsvException {
         Map<String, Object> map = new HashMap<String, Object>();
-        Boolean rateList = rateService.rateList();
+        Boolean rateList = rateService.getTask();
+        // Boolean rateList = rateService.rateList();
         if (rateList != null) {
             map.put("date", rateList);
             map.put("message", "success");
         } else {
             map.put("message", "error");
         }
+        System.out.println(map.get("message"));
         return map;
 
     }

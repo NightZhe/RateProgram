@@ -18,6 +18,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -64,6 +66,8 @@ public class RateServiceImpl implements RateService {
 
         System.out.println("------------");
         System.out.println(rateString.size());
+
+        // insert 用for 一筆一筆打;
         // if (rateDao.insertRate(rateString)) {
         // System.out.println("true");
         // return true;
@@ -72,6 +76,7 @@ public class RateServiceImpl implements RateService {
         // return false;
         // }
 
+        // 把rateString 轉換成 List<Rate> insertdata 供jdbcTemplate.batchUpdate 使用
         List<Rate> insertdata = converToRAaetData(rateString);
 
         if (rateDao.bathInsert(insertdata)) {
@@ -120,7 +125,7 @@ public class RateServiceImpl implements RateService {
 
                 while ((line = reader.readLine()) != null) {
                     response.append(line);
-                    System.out.println(line);
+                    // System.out.println(line);
                 }
 
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -173,6 +178,43 @@ public class RateServiceImpl implements RateService {
         sc.init(null, trustAllCerts, new java.security.SecureRandom());
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
         HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
+    }
+
+    @Override
+    public Boolean getTask() {
+
+        Timer timer = new Timer();
+        MyTaks task = new MyTaks();
+
+        try {
+            timer.schedule(task, 5000, 10000);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+
+    }
+
+    int count = 0;
+
+    class MyTaks extends TimerTask {
+        @Override
+        public void run() {
+            try {
+                rateList();
+                count++;
+                if (count > 5) {
+                    cancel();
+                    System.out.println("超過五次停止");
+                } else {
+                    System.out.println("跑了幾次count:" + count);
+                }
+            } catch (IOException | CsvException e) {
+                e.printStackTrace();
+                System.out.println(e);
+            }
+        }
     }
 
 }
