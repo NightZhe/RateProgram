@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.opencsv.exceptions.CsvException;
 import com.rate.demo.service.RateService;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class MainController {
@@ -41,4 +43,38 @@ public class MainController {
         return map;
 
     }
+
+    @RequestMapping("/currencyid")
+    @ResponseBody
+    public Map<String, Object> getCurrencyDownList() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        List currencyList = rateService.currencyList();
+
+        if (currencyList != null) {
+            map.put("data", currencyList);
+            map.put("messaage", "sueccess");
+        } else {
+            map.put("message", "error");
+        }
+
+        return map;
+    }
+
+    @RequestMapping("/convertRate")
+    @ResponseBody
+    public Map<String, Object> convertRate(@RequestParam String downSelectValue, String targetCurrencyValue) {
+        System.out.println("downSelectValue: " + downSelectValue);
+        System.out.println("targetCurrencyValue: " + targetCurrencyValue);
+        Map<String, Object> map = new HashMap<String, Object>();
+        List rateList = rateService.converRate(downSelectValue, targetCurrencyValue);
+        if (rateList != null) {
+            map.put("data", rateList);
+            map.put("message", "sucess");
+        } else {
+            map.put("message", "error");
+        }
+        return map;
+
+    }
+
 }

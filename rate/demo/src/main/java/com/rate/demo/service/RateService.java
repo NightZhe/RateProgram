@@ -12,4 +12,8 @@ public interface RateService {
     public Boolean rateList() throws FileNotFoundException, IOException, CsvException;
 
     public Boolean getTask();
+
+    public List currencyList();
+
+    public List converRate(String downSelectValue, String targetCurrencyValue);
 }

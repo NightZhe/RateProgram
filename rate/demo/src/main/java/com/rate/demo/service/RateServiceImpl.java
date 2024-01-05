@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.rate.demo.dao.RateDao;
+import com.rate.demo.model.CurrencyName;
 import com.rate.demo.model.Rate;
 import com.fasterxml.jackson.core.StreamReadConstraints.Builder;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -196,6 +197,7 @@ public class RateServiceImpl implements RateService {
 
     }
 
+    // count 計算次數，可控制taks跑幾次
     int count = 0;
 
     class MyTaks extends TimerTask {
@@ -217,4 +219,21 @@ public class RateServiceImpl implements RateService {
         }
     }
 
+    @Override
+    public List<CurrencyName> currencyList() {
+        return rateDao.currencyList();
+    }
+
+    @Override
+    public List converRate(String downSelectValue, String targetCurrencyValue) {
+        String unit = "";
+        if (downSelectValue.equals("1") && targetCurrencyValue.equals("10")) {
+            unit = "USD_NTD";
+        } else {
+            return null;
+        }
+
+        List currency = rateDao.converRate(unit);
+        return currency;
+    }
 }

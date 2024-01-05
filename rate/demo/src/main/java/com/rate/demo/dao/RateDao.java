@@ -5,12 +5,15 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
+import com.rate.demo.model.CurrencyName;
 import com.rate.demo.model.Rate;
 
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 @Repository
 public class RateDao {
@@ -88,6 +91,29 @@ public class RateDao {
             System.out.println(e);
             return false;
         }
+    }
+
+    public List<CurrencyName> currencyList() {
+
+        RowMapper<CurrencyName> rowMapper = new CurrencyNameRowMapper();
+        String sql = "select * from currency";
+
+        List<CurrencyName> currencyList = jdbcTemplate.query(sql, rowMapper);
+
+        return currencyList;
+
+    }
+
+    /**
+     * @param unit
+     * @return
+     */
+    public List<Rate> converRate(String unit) {
+        String sql = "select " + unit + " from  rate  where Date ='20240103' ";
+
+        List rateList = jdbcTemplate.queryForList(sql);
+
+        return rateList;
     }
 
 }

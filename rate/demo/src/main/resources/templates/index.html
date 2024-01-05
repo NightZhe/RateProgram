@@ -22,27 +22,75 @@
         <h1 style="color: rgb(32, 234, 166);">匯率及幣值換算</h1>
         <p> 試算內容僅供參考，實際交易之金額以交易當時匯率為計算基準 </p>
         <div>我想要將
-            <select></select>
-            參考匯率
+            <select id="currency"></select>
         </div>
         <div>兌換成
-            <select></select>
-            參考匯率
+            <select id="targetCurrency"></select>
+
+        </div>
+
+        <div>
+            <p id="output"> 參考匯率 </p>
         </div>
 
         <div id="div1"></div>
         <button id="but01">獲取匯率</button>
 
+        <button id="convert"> Convert</button>
+
     </center>
     <script>
+        // 鎖右鍵，選取，跟複製功能。
+        // document.oncontextmenu = function () { return false }; //鎖右鍵
+        document.onselectstart = function () { return false }; //鎖選取
+        document.oncopy = function () { return false }; //鎖複製
 
+
+        $(document).ready(function () {
+            $.ajax({
+                url: 'currencyid',
+                type: 'post',
+                success: function (result) {
+                    result = result.data;
+                    for (i = 0; i < result.length; i++) {
+                        $("#currency").append("<option value=" + result[i].id + ">" + result[i].unit + "</option>")
+                    }
+                }
+            })
+
+            $.ajax({
+                url: 'currencyid',
+                type: 'post',
+                success: function (result) {
+                    result = result.data;
+                    for (i = 0; i < result.length; i++) {
+                        $("#targetCurrency").append("<option value=" + result[i].id + ">" + result[i].unit + "</option>")
+                    }
+                }
+            })
+
+
+
+        })
         $("#but01").click(function () {
+
+            var downSelectValue = $("#currency").val();
+            console.log("downSelectValue: " + downSelectValue);
+
+            var downSelectOptionVlaue = $("#currency").find(':selected').text();
+            console.log("downSelectOptionVlaue: " + downSelectOptionVlaue);
+
+
+            var targetCurrencyValue = $("#targetCurrency").val();
+            console.log("targetCurrencyValue: " + targetCurrencyValue);
+
             $.ajax(
                 {
                     url: 'getRate',
                     method: "get",
                     success: res => {
-                        console.log("寫入成功" + res)
+                        result = res.message
+                        alert("寫入成功" + result)
                     },
                     error: res => {
                         console.log("寫入失敗" + res)
@@ -51,6 +99,38 @@
                 }
             )
         })
+        $("#convert").click(function () {
+
+            var downSelectValue = $("#currency").val();
+            console.log("downSelectValue: " + downSelectValue);
+
+            var targetCurrencyValue = $("#targetCurrency").val();
+            console.log("targetCurrencyValue: " + targetCurrencyValue);
+
+            $.ajax({
+                url: 'convertRate',
+                type: 'post',
+                data: { downSelectValue, targetCurrencyValue },
+                success: function (result) {
+                    message = result.message
+                    data = result.data
+                    let dataMap = new Map(Object.entries(data))
+                    console.log(dataMap.get('0'));
+                    let objectRate = (dataMap.get('0'));
+                    console.log(objectRate)
+                    let converRate = (objectRate['USD_NTD'])
+                    $("#output").text(converRate);
+
+                },
+                error: function (result) {
+                    result = result.message
+                    alert(result);
+                }
+            })
+
+        })
+
+
     </script>
 </body>
 
