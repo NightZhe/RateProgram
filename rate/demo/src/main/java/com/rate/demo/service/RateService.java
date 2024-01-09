@@ -16,4 +16,6 @@ public interface RateService {
     public List currencyList();
 
     public List converRate(String downSelectValue, String targetCurrencyValue);
+
+    public List getRateList();
 }

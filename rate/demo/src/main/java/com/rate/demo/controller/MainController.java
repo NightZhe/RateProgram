@@ -77,4 +77,19 @@ public class MainController {
 
     }
 
+    @RequestMapping("/getRateList")
+    @ResponseBody
+    public Map<String, Object> getRateList() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        List rateList = rateService.getRateList();
+        if (rateList != null) {
+            map.put("data", rateList);
+            map.put("message", "success");
+
+        } else {
+            map.put("message", "error");
+        }
+        return map;
+    }
+
 }

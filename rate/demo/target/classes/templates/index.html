@@ -38,6 +38,23 @@
 
         <button id="convert"> Convert</button>
 
+        <button id="getRateList">getRateList</button>
+        <table class="rateList" border="1">
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>USD_NTD</th>
+                <th>RMB_USD</th>
+                <th>EUR_USD</th>
+                <th>USD_JPY</th>
+                <th>GBP_USD</th>
+                <th>AUD_USD</th>
+                <th>USD_HKD</th>
+                <th>USD_RMB</th>
+                <th>USD_ZAR</th>
+                <th>NZD_USD</th>
+            </tr>
+        </table>
     </center>
     <script>
         // 鎖右鍵，選取，跟複製功能。
@@ -128,6 +145,38 @@
                 }
             })
 
+        })
+
+        $("#getRateList").click(function () {
+            $.ajax({
+                url: 'getRateList',
+                type: 'post',
+                success: function (result) {
+                    data = result.data;
+                    for (i = 0; i < data.length; i++) {
+                        $(".rateList").append("<tr><td>"
+                            + data[i].id + "</td><td>"
+                            + data[i].Date + "</td><td>"
+                            + data[i].USD_NTD + "</td><td>"
+                            + data[i].RMB_USD + "</td><td>"
+                            + data[i].EUR_USD + "</td><td>"
+                            + data[i].USD_JPY + "</td><td>"
+                            + data[i].GBP_USD + "</td><td>"
+                            + data[i].AUD_USD + "</td><td>"
+                            + data[i].USD_HKD + "</td><td>"
+                            + data[i].USD_RMB + "</td><td>"
+                            + data[i].USD_ZAR + "</td><td>"
+                            + data[i].NZD_USD + "</td></tr>")
+                    }
+
+
+                },
+                error: function (result) {
+                    message = result.message
+                    console.log("message:" + message);
+                }
+
+            })
         })
 
 

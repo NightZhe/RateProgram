@@ -17,7 +17,6 @@ public class RateListMapper implements RowMapper {
         Rate rate = new Rate();
         rate.setId(rs.getInt("id"));
         rate.setDate(rs.getString("unit"));
-        rate.setDate(rs.getString("unit"));
         return rate;
     }
 

@@ -2,15 +2,14 @@ package com.rate.demo.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
-
 import com.rate.demo.model.CurrencyName;
 import com.rate.demo.model.Rate;
-
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -109,11 +108,32 @@ public class RateDao {
      * @return
      */
     public List<Rate> converRate(String unit) {
-        String sql = "select " + unit + " from  rate  where Date ='20240103' ";
+        String sql = "select " + unit + " from  rate  where Date = ? ";
+        LocalDate nowdate = LocalDate.now();
+        LocalDate previousWorkDate = getLastworkDate(nowdate);
 
-        List rateList = jdbcTemplate.queryForList(sql);
+        String stringDate = previousWorkDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        System.out.println("stringDate: " + stringDate);
 
-        return rateList;
+        List rate = jdbcTemplate.queryForList(sql, stringDate);
+
+        return rate;
     }
 
+    public static LocalDate getLastworkDate(LocalDate currentDate) {
+        LocalDate previousWorkDate = currentDate.minusDays(1);
+        while (previousWorkDate.getDayOfWeek() == DayOfWeek.SATURDAY
+                || previousWorkDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            previousWorkDate = previousWorkDate.minusDays(1);
+        }
+
+        return previousWorkDate;
+    }
+
+    public List<Rate> getRateList() {
+
+        String sql = " select * from rate ";
+        List rateList = jdbcTemplate.queryForList(sql);
+        return rateList;
+    }
 }

@@ -236,4 +236,9 @@ public class RateServiceImpl implements RateService {
         List currency = rateDao.converRate(unit);
         return currency;
     }
+
+    @Override
+    public List getRateList() {
+        return rateDao.getRateList();
+    }
 }
