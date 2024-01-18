@@ -37,6 +37,19 @@
         <button id="but01">獲取匯率</button>
 
         <button id="convert"> Convert</button>
+        <input type="radio" name="aa">
+        <input type="radio" name="aa">
+        <input type="radio" name="aa">
+
+        <select id="myselect">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3 ">3</option>
+        </select>
+        <input type="text" id="mytext">
+
+        <button id="getdatas">同時獲取select value and input text</button>
+        <hr>
 
         <button id="getRateList">getRateList</button>
         <table class="rateList" border="1">
@@ -57,6 +70,13 @@
         </table>
     </center>
     <script>
+        $("#getdatas").click(function () {
+            var selectValue = $("#myselect").val()
+            var inputValue = $("#mytext").val();
+            alert("selectValue: " + selectValue);
+            alert("inputValue: " + inputValue);
+
+        })
         // 鎖右鍵，選取，跟複製功能。
         // document.oncontextmenu = function () { return false }; //鎖右鍵
         document.onselectstart = function () { return false }; //鎖選取
